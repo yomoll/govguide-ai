@@ -3,6 +3,9 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "How it works",
+  description:
+    "GovGuide interprets your question, searches official GOV.UK APIs, and writes a cited plain-English summary. Always check the original guidance.",
+  alternates: { canonical: "/how-it-works" },
 };
 
 const steps = [

@@ -3,6 +3,7 @@ import { SavedList } from "@/components/SavedList";
 
 export const metadata: Metadata = {
   title: "Saved answers",
+  robots: { index: false, follow: true },
 };
 
 export default function SavedPage() {
