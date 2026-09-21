@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About",
+  description:
+    "GovGuide AI is an independent CivicAI Labs tool that searches official GOV.UK APIs. It is not affiliated with GOV.UK.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
