@@ -1,13 +1,15 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowRight,
-  Baby,
-  Briefcase,
-  Car,
-  IdentificationCard,
+  ArrowUp,
+  CaretLeft,
+  CaretRight,
+  Pause,
+  Play,
 } from "@phosphor-icons/react";
 import { EXAMPLE_QUESTIONS } from "@/lib/examples";
 import type { AskAnswer, StreamEvent } from "@/lib/types";
@@ -22,12 +24,7 @@ const STAGE_LABEL: Record<Exclude<Stage, "idle" | "answer">, string> = {
   error: "Something went wrong",
 };
 
-const ICONS = {
-  briefcase: Briefcase,
-  id: IdentificationCard,
-  car: Car,
-  child: Baby,
-};
+const ROTATE_MS = 6000;
 
 export function AskExperience() {
   const router = useRouter();
@@ -39,6 +36,49 @@ export function AskExperience() {
   const [error, setError] = useState<string | null>(null);
   const [answer, setAnswer] = useState<AskAnswer | null>(null);
   const askedRef = useRef<string | null>(null);
+
+  const [exampleIndex, setExampleIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [engaged, setEngaged] = useState(false);
+  const [pinnedQuestion, setPinnedQuestion] = useState("");
+  const [heroInView, setHeroInView] = useState(true);
+  const [footerInView, setFooterInView] = useState(false);
+  const heroFormRef = useRef<HTMLFormElement>(null);
+
+  const example = EXAMPLE_QUESTIONS[exampleIndex];
+  const autoplay = !paused && !engaged && question.trim() === "";
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setPaused(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!autoplay) return;
+    const timer = window.setTimeout(() => {
+      setExampleIndex((index) => (index + 1) % EXAMPLE_QUESTIONS.length);
+    }, ROTATE_MS);
+    return () => window.clearTimeout(timer);
+  }, [autoplay, exampleIndex]);
+
+  useEffect(() => {
+    const form = heroFormRef.current;
+    const footer = document.querySelector("footer");
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target === form) setHeroInView(entry.isIntersecting);
+        else setFooterInView(entry.isIntersecting);
+      }
+    });
+    if (form) observer.observe(form);
+    if (footer) observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
+
+  function stepExample(delta: number) {
+    setExampleIndex((index) => (index + delta + EXAMPLE_QUESTIONS.length) % EXAMPLE_QUESTIONS.length);
+  }
 
   useEffect(() => {
     if (initial && askedRef.current !== initial) {
@@ -123,79 +163,172 @@ export function AskExperience() {
     void submitQuestion(question);
   }
 
+  function onPinnedSubmit(event: FormEvent) {
+    event.preventDefault();
+    const value = pinnedQuestion;
+    setPinnedQuestion("");
+    void submitQuestion(value);
+  }
+
   const busy = stage === "interpret" || stage === "search" || stage === "retrieve";
+  const showPinned = !heroInView && !footerInView;
+  const controlClass =
+    "flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-[#0b0c0c] backdrop-blur hover:bg-white";
 
   return (
     <div>
       <section className="bg-paper">
-        <div className="mx-auto max-w-[40rem] px-4 pb-24 pt-16 text-center md:pb-28 md:pt-20">
-          <h1 className="text-[2.15rem] font-bold leading-[1.15] tracking-tight md:text-5xl">
-            Ask government information in normal English.
-          </h1>
-          <p className="mx-auto mt-4 max-w-[32rem] text-lg text-muted">
-            Search official GOV.UK pages, then get a plain-English summary with links to check.
-          </p>
-
-          <form className="mt-8 text-left" onSubmit={onSubmit}>
-            <label htmlFor="question" className="block text-base font-bold">
-              Your question
-            </label>
-            <p id="question-help" className="mt-1 text-base text-muted">
-              Write it the way you would ask a person. Do not include National Insurance numbers, passwords, or other personal details.
+        <div className="mx-auto max-w-5xl px-4 pb-16 pt-12 md:pb-20 md:pt-16">
+          <div className="mx-auto max-w-[44rem] text-center">
+            <h1 className="text-[2.25rem] font-bold leading-[1.1] tracking-tight md:text-[3.5rem]">
+              Ask government information in normal English.
+            </h1>
+            <p className="mx-auto mt-4 max-w-[34rem] text-lg text-muted md:text-xl">
+              Search official GOV.UK pages, then get a plain-English summary with links to check.
             </p>
-            <div className="mt-3 border-2 border-ink bg-surface focus-within:outline focus-within:outline-[3px] focus-within:outline-offset-0 focus-within:outline-[var(--focus)]">
-              <textarea
-                id="question"
-                name="question"
-                rows={3}
-                required
-                minLength={8}
-                value={question}
-                onChange={(event) => setQuestion(event.target.value)}
-                onKeyDown={(event) => {
-                  if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
-                    event.preventDefault();
-                    void submitQuestion(question);
-                  }
-                }}
-                aria-describedby="question-help"
-                className="w-full resize-y border-0 bg-transparent px-4 py-3 text-[1.1875rem] text-ink outline-none placeholder:text-muted"
-                placeholder="Ask in your own words"
+          </div>
+
+          <div
+            className="relative mt-10 h-[30rem] overflow-hidden rounded-3xl bg-warn-bg md:h-[34rem]"
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Example questions"
+            onFocus={() => setEngaged(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setEngaged(false);
+            }}
+          >
+            {EXAMPLE_QUESTIONS.map((item, index) => (
+              <Image
+                key={item.image}
+                src={item.image}
+                alt={index === exampleIndex ? item.alt : ""}
+                aria-hidden={index === exampleIndex ? undefined : true}
+                fill
+                priority={index === 0}
+                sizes="(min-width: 1024px) 992px, 100vw"
+                className={`object-cover transition-[opacity,transform] duration-[1200ms] ease-out ${
+                  index === exampleIndex ? "scale-100 opacity-100" : "scale-[1.04] opacity-0"
+                }`}
               />
-              <div className="flex justify-end border-t border-line px-3 py-2">
+            ))}
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/60 to-transparent"
+              aria-hidden="true"
+            />
+
+            <form
+              ref={heroFormRef}
+              onSubmit={onSubmit}
+              className="absolute inset-x-3 top-3 rounded-2xl bg-surface p-3 text-left shadow-[0_18px_50px_-12px_rgb(11_12_12/0.45)] focus-within:ring-[3px] focus-within:ring-[var(--focus)] md:inset-x-12 md:top-12 md:p-4"
+            >
+              <label htmlFor="question" className="block px-1 text-base font-bold">
+                Your question
+              </label>
+              <div className="mt-1 flex items-end gap-3">
+                <textarea
+                  id="question"
+                  name="question"
+                  rows={2}
+                  required
+                  minLength={8}
+                  value={question}
+                  onChange={(event) => setQuestion(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                      event.preventDefault();
+                      void submitQuestion(question);
+                    }
+                  }}
+                  aria-describedby="question-help"
+                  className="min-h-[3.5rem] w-full resize-none border-0 bg-transparent px-1 py-1 text-[1.1875rem] leading-snug text-ink outline-none placeholder:text-muted focus-visible:shadow-none"
+                  placeholder={`Try: “${example.text}”`}
+                />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 bg-cta px-5 py-2.5 font-bold text-on-cta hover:bg-cta-hover active:scale-[0.99] disabled:opacity-60"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-cta px-5 py-3 font-bold text-on-cta hover:bg-cta-hover active:scale-[0.98] disabled:opacity-60"
                   disabled={busy}
                 >
                   Ask
                   <ArrowRight size={18} weight="bold" aria-hidden="true" />
                 </button>
               </div>
-            </div>
-          </form>
+            </form>
 
-          {stage === "idle" || stage === "error" ? (
-            <ul className="mt-7 space-y-0.5 text-left">
-              {EXAMPLE_QUESTIONS.map((example) => {
-                const Icon = ICONS[example.icon];
-                return (
-                  <li key={example.text}>
-                    <button
-                      type="button"
-                      className="flex w-full items-center gap-3 px-1 py-2.5 text-left text-[1.05rem] leading-snug text-ink hover:text-brand"
-                      onClick={() => void submitQuestion(example.text)}
-                    >
-                      <Icon size={20} weight="regular" className="shrink-0 text-brand" aria-hidden="true" />
-                      <span>{example.text}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
+            <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-3 md:inset-x-12 md:bottom-8">
+              <button
+                type="button"
+                onClick={() => void submitQuestion(example.text)}
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-left text-base font-semibold text-[#0b0c0c] backdrop-blur hover:bg-white"
+              >
+                Ask this example
+                <ArrowRight size={16} weight="bold" aria-hidden="true" />
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="mr-1 hidden text-sm font-semibold tabular-nums text-white sm:inline" aria-hidden="true">
+                  {exampleIndex + 1} / {EXAMPLE_QUESTIONS.length}
+                </span>
+                <button type="button" className={controlClass} onClick={() => stepExample(-1)} aria-label="Previous example">
+                  <CaretLeft size={18} weight="bold" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  className={controlClass}
+                  onClick={() => setPaused((value) => !value)}
+                  aria-label={paused ? "Play the example questions" : "Pause the example questions"}
+                >
+                  {paused ? (
+                    <Play size={18} weight="fill" aria-hidden="true" />
+                  ) : (
+                    <Pause size={18} weight="fill" aria-hidden="true" />
+                  )}
+                </button>
+                <button type="button" className={controlClass} onClick={() => stepExample(1)} aria-label="Next example">
+                  <CaretRight size={18} weight="bold" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            <p className="sr-only" aria-live={autoplay ? "off" : "polite"}>
+              Example {exampleIndex + 1} of {EXAMPLE_QUESTIONS.length}: {example.text}
+            </p>
+          </div>
+
+          <p id="question-help" className="mx-auto mt-4 max-w-[44rem] text-center text-base text-muted">
+            Write it the way you would ask a person. Do not include National Insurance numbers, passwords, or other personal details.
+          </p>
         </div>
       </section>
+
+      <form
+        onSubmit={onPinnedSubmit}
+        inert={!showPinned}
+        className={`no-print fixed inset-x-0 bottom-4 z-40 mx-auto w-full max-w-2xl px-4 transition-[opacity,transform] duration-300 ${
+          showPinned ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
+        }`}
+      >
+        <div className="flex items-center gap-2 rounded-full border border-line bg-surface py-2 pl-5 pr-2 shadow-[0_18px_50px_-12px_rgb(11_12_12/0.35)] focus-within:ring-[3px] focus-within:ring-[var(--focus)]">
+          <label htmlFor="pinned-question" className="sr-only">
+            Ask another question
+          </label>
+          <input
+            id="pinned-question"
+            type="text"
+            value={pinnedQuestion}
+            onChange={(event) => setPinnedQuestion(event.target.value)}
+            placeholder="Ask another question…"
+            className="min-w-0 flex-1 border-0 bg-transparent text-[1.0625rem] text-ink outline-none placeholder:text-muted focus-visible:shadow-none"
+          />
+          <button
+            type="submit"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cta text-on-cta hover:bg-cta-hover disabled:opacity-60"
+            disabled={busy}
+            aria-label="Ask"
+          >
+            <ArrowUp size={20} weight="bold" aria-hidden="true" />
+          </button>
+        </div>
+      </form>
 
       <div id="answer" className="mx-auto max-w-3xl scroll-mt-6 px-4 pb-12">
         {stage !== "idle" && stage !== "answer" ? (
