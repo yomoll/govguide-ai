@@ -23,6 +23,7 @@ export function SiteHeader() {
             <Compass size={20} weight="bold" aria-hidden="true" />
           </span>
           <span className="text-[1.2rem] font-bold tracking-tight">GovGuide AI</span>
+          <UnionFlag />
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           {links.map((link) => {
@@ -47,6 +48,31 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
+  );
+}
+
+function UnionFlag() {
+  return (
+    <svg
+      viewBox="0 0 60 30"
+      className="h-4 w-8 shrink-0 ring-1 ring-white/80"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <clipPath id="union-flag-frame">
+        <path d="M0,0 v30 h60 v-30 z" />
+      </clipPath>
+      <clipPath id="union-flag-diagonals">
+        <path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z" />
+      </clipPath>
+      <g clipPath="url(#union-flag-frame)">
+        <path d="M0,0 v30 h60 v-30 z" fill="#012169" />
+        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6" />
+        <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#union-flag-diagonals)" stroke="#C8102E" strokeWidth="4" />
+        <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10" />
+        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6" />
+      </g>
+    </svg>
   );
 }
 
