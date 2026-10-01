@@ -13,15 +13,15 @@ export function SiteFooter() {
         </div>
         <div className="text-sm">
           <p className="font-semibold">Official sources</p>
-          <ul className="mt-2 space-y-1 text-muted">
+          <ul className="mt-1 text-muted">
             <li>
-              <a className="text-accent underline underline-offset-4 hover:text-accent-hover" href="https://www.gov.uk">
+              <a className="inline-block py-1 text-accent underline underline-offset-4 hover:text-accent-hover" href="https://www.gov.uk">
                 GOV.UK
               </a>
             </li>
             <li>
               <a
-                className="text-accent underline underline-offset-4 hover:text-accent-hover"
+                className="inline-block py-1 text-accent underline underline-offset-4 hover:text-accent-hover"
                 href="https://content-api.publishing.service.gov.uk/"
               >
                 GOV.UK Content API
@@ -29,7 +29,7 @@ export function SiteFooter() {
             </li>
           </ul>
           <p className="mt-4">
-            <Link className="text-accent underline underline-offset-4 hover:text-accent-hover" href="/about">
+            <Link className="inline-block py-1 text-accent underline underline-offset-4 hover:text-accent-hover" href="/about">
               About this tool
             </Link>
           </p>
