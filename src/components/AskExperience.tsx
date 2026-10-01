@@ -241,7 +241,7 @@ export function AskExperience() {
                     }
                   }}
                   aria-describedby="question-help"
-                  className="min-h-[5.25rem] w-full resize-none sm:min-h-[3.5rem] border-0 bg-transparent px-1 py-1 text-[1.1875rem] leading-snug text-ink outline-none placeholder:text-muted focus-visible:shadow-none"
+                  className="min-h-[5.25rem] w-full resize-none sm:min-h-[3.5rem] border-0 bg-transparent px-1 py-1 bare-field text-[1.1875rem] leading-snug text-ink placeholder:text-muted"
                   placeholder={`Try: “${example.text}”`}
                 />
                 <button
@@ -317,7 +317,7 @@ export function AskExperience() {
             value={pinnedQuestion}
             onChange={(event) => setPinnedQuestion(event.target.value)}
             placeholder="Ask another question…"
-            className="min-w-0 flex-1 border-0 bg-transparent text-[1.0625rem] text-ink outline-none placeholder:text-muted focus-visible:shadow-none"
+            className="min-w-0 flex-1 border-0 bg-transparent bare-field text-[1.0625rem] text-ink placeholder:text-muted"
           />
           <button
             type="submit"

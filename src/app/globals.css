@@ -91,6 +91,12 @@ body {
   box-shadow: 0 0 0 6px #0b0c0c;
 }
 
+/* Only for fields whose wrapper draws its own focus-within ring. */
+.bare-field:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 .skip-link {
   position: absolute;
   left: 0.75rem;
