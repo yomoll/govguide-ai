@@ -189,7 +189,7 @@ export function AskExperience() {
           </div>
 
           <div
-            className="relative mt-10 h-[30rem] overflow-hidden rounded-3xl bg-warn-bg md:h-[34rem]"
+            className="relative mt-10 h-[33rem] overflow-hidden rounded-3xl bg-warn-bg sm:h-[30rem] md:h-[34rem]"
             role="group"
             aria-roledescription="carousel"
             aria-label="Example questions"
@@ -225,7 +225,7 @@ export function AskExperience() {
               <label htmlFor="question" className="block px-1 text-base font-bold">
                 Your question
               </label>
-              <div className="mt-1 flex items-end gap-3">
+              <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-3">
                 <textarea
                   id="question"
                   name="question"
@@ -241,12 +241,12 @@ export function AskExperience() {
                     }
                   }}
                   aria-describedby="question-help"
-                  className="min-h-[3.5rem] w-full resize-none border-0 bg-transparent px-1 py-1 text-[1.1875rem] leading-snug text-ink outline-none placeholder:text-muted focus-visible:shadow-none"
+                  className="min-h-[5.25rem] w-full resize-none sm:min-h-[3.5rem] border-0 bg-transparent px-1 py-1 text-[1.1875rem] leading-snug text-ink outline-none placeholder:text-muted focus-visible:shadow-none"
                   placeholder={`Try: “${example.text}”`}
                 />
                 <button
                   type="submit"
-                  className="inline-flex shrink-0 items-center gap-2 rounded-full bg-cta px-5 py-3 font-bold text-on-cta hover:bg-cta-hover active:scale-[0.98] disabled:opacity-60"
+                  className="inline-flex shrink-0 items-center gap-2 self-end rounded-full bg-cta px-5 py-3 font-bold text-on-cta hover:bg-cta-hover active:scale-[0.98] disabled:opacity-60"
                   disabled={busy}
                 >
                   Ask
@@ -255,17 +255,17 @@ export function AskExperience() {
               </div>
             </form>
 
-            <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-3 md:inset-x-12 md:bottom-8">
+            <div className="absolute inset-x-3 bottom-3 flex flex-col items-end gap-2 sm:flex-row sm:justify-between sm:gap-3 md:inset-x-12 md:bottom-8">
               <button
                 type="button"
                 onClick={() => void submitQuestion(example.text)}
-                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-left text-base font-semibold text-[#0b0c0c] backdrop-blur hover:bg-white"
+                className="order-last inline-flex min-h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white/90 px-4 py-2 text-base font-semibold text-[#0b0c0c] backdrop-blur hover:bg-white sm:order-none sm:w-auto"
               >
                 Ask this example
                 <ArrowRight size={16} weight="bold" aria-hidden="true" />
               </button>
               <div className="flex items-center gap-2">
-                <span className="mr-1 hidden text-sm font-semibold tabular-nums text-white sm:inline" aria-hidden="true">
+                <span className="mr-1 text-sm font-semibold tabular-nums text-white" aria-hidden="true">
                   {exampleIndex + 1} / {EXAMPLE_QUESTIONS.length}
                 </span>
                 <button type="button" className={controlClass} onClick={() => stepExample(-1)} aria-label="Previous example">

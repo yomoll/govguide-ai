@@ -17,12 +17,12 @@ export function SiteHeader() {
 
   return (
     <header className="no-print bg-header text-header-ink">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4">
-        <Link href="/" className="flex items-center gap-2.5 text-header-ink">
-          <span className="flex h-8 w-8 items-center justify-center bg-white text-brand">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4">
+        <Link href="/" className="flex min-w-0 items-center gap-2 text-header-ink sm:gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-white text-brand">
             <Compass size={20} weight="bold" aria-hidden="true" />
           </span>
-          <span className="text-[1.2rem] font-bold tracking-tight">GovGuide AI</span>
+          <span className="whitespace-nowrap text-[1.1rem] font-bold tracking-tight sm:text-[1.2rem]">GovGuide AI</span>
           <UnionFlag />
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
@@ -42,7 +42,7 @@ export function SiteHeader() {
             );
           })}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <ThemeToggle />
           <MobileNav pathname={pathname} />
         </div>
@@ -55,7 +55,7 @@ function UnionFlag() {
   return (
     <svg
       viewBox="0 0 60 30"
-      className="h-4 w-8 shrink-0 ring-1 ring-white/80"
+      className="h-3.5 w-7 shrink-0 ring-1 ring-white/80 sm:h-4 sm:w-8"
       aria-hidden="true"
       focusable="false"
     >

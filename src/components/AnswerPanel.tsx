@@ -196,7 +196,7 @@ export function AnswerPanel({ answer }: { answer: AskAnswer }) {
       </section>
 
       <details className="border border-line bg-surface p-5 text-sm">
-        <summary className="cursor-pointer font-medium">What we searched</summary>
+        <summary className="cursor-pointer py-1 font-medium">What we searched</summary>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-muted">
           {current.queries.map((query) => (
             <li key={query}>{query}</li>
