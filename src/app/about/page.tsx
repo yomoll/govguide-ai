@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TRACKS } from "@/lib/music";
 
 export const metadata: Metadata = {
   title: "About",
@@ -39,6 +40,21 @@ export default function AboutPage() {
           Do not paste personal information such as National Insurance numbers, passport numbers, or login codes.
         </p>
       </div>
+
+      <h2 className="mt-10 text-2xl font-bold tracking-tight">Music</h2>
+      <p className="mt-3 text-muted">
+        The optional background music is public-domain recordings from Wikimedia Commons. It only plays if you press the music button.
+      </p>
+      <ul className="mt-4 space-y-2 text-muted">
+        {TRACKS.map((track) => (
+          <li key={track.src}>
+            <a className="text-accent underline underline-offset-2" href={track.source}>
+              {track.title}
+            </a>{" "}
+            ({track.year}), performed by {track.performer}
+          </li>
+        ))}
+      </ul>
     </main>
   );
 }

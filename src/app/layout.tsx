@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
+import { BackgroundMusic } from "@/components/BackgroundMusic";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin", "latin-ext"],
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <DisclaimerBanner />
         <div className="flex-1">{children}</div>
         <SiteFooter />
+        <BackgroundMusic />
       </body>
     </html>
   );
